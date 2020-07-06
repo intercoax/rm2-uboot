@@ -837,7 +837,9 @@ dtb-$(CONFIG_STM32MP15x) += \
 	stm32mp157f-dk2.dtb \
 	stm32mp157f-ed1.dtb \
 	stm32mp157f-ev1.dtb \
-	stm32mp15xx-dhcom-pdk2.dtb
+	stm32mp15xx-dhcom-pdk2.dtb \
+	stm32mp157c-ya157c-512d-v1.dtb \
+	stm32mp157c-ya157c-512d-v2.dtb	
 
 dtb-$(CONFIG_SOC_K3_AM6) += k3-am654-base-board.dtb k3-am654-r5-base-board.dtb
 dtb-$(CONFIG_SOC_K3_J721E) += k3-j721e-common-proc-board.dtb \
