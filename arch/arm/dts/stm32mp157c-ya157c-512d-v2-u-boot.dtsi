@@ -17,7 +17,7 @@
 		u-boot,boot-led = "heartbeat";
 		u-boot,error-led = "error";
 		u-boot,mmc-env-partition = "ssbl";
-		st,adc_usb_pd = <&adc1 18>, <&adc1 19>;
+		//st,adc_usb_pd = <&adc1 18>, <&adc1 19>;
 		
 	};
 	led {
@@ -31,7 +31,7 @@
 };
 
 &adc {
-	status = "okay";
+	status = "disable";
 };
 
 //#ifndef CONFIG_STM32MP1_TRUSTED
