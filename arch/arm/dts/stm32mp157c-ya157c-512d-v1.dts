@@ -14,7 +14,29 @@
 
 / {
 	model = "MYIRTECH MYD-YA157C v1 Development Board";
-	compatible = "st,stm32mp157c-ya157c", "st,stm32mp157";
+	compatible = "st,stm32mp157c-ya157c-v1", "st,stm32mp157";
+	aliases {
+		ethernet0 = &ethernet0;
+		serial0 = &uart4;
+		serial1 = &usart3;
+		//serial2 = &uart7;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	reserved-memory {
+		gpu_reserved: gpu@da000000 {
+			reg = <0xda000000 0x4000000>;
+			no-map;
+		};
+
+		optee_memory: optee@0xde000000 {
+			reg = <0xde000000 0x02000000>;
+			no-map;
+		};
+	};
 
 	usb_phy_tuning: usb-phy-tuning {
 		st,hs-dc-level = <2>;

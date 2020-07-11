@@ -16,7 +16,7 @@
  * address mapping : RBC
  * Tc > + 85C : N
  */
-#define DDR_MEM_NAME "DDR3-1066/888 bin G 2x2Gb 533MHz v1.44"
+#define DDR_MEM_NAME "DDR3-DDR3L 32bits 533000Khz"
 #define DDR_MEM_SPEED 533000
 #define DDR_MEM_SIZE 0x20000000
 

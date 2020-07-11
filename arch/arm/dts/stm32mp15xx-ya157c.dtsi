@@ -13,30 +13,6 @@
 		device_type = "memory";
 		reg = <0xc0000000 0x20000000>;
 	};
-	
-		
-	aliases {
-		ethernet0 = &ethernet0;
-		serial0 = &uart4;
-		serial1 = &usart3;
-		//serial2 = &uart7;
-	};
-
-	chosen {
-		stdout-path = "serial0:115200n8";
-	};
-
-	reserved-memory {
-		gpu_reserved: gpu@da000000 {
-			reg = <0xda000000 0x4000000>;
-			no-map;
-		};
-
-		optee_memory: optee@0xde000000 {
-			reg = <0xde000000 0x02000000>;
-			no-map;
-		};
-	};
 
 	reserved-memory {
 		#address-cells = <1>;
@@ -121,7 +97,7 @@
 };
 
 &optee {
-	status = "okay";
+	status = "disable";
 };
 
 &cpu0{
@@ -205,7 +181,7 @@
 };
 
 &rtc {
-	status = "okay";
+	status = "disable";
 };
 
 
@@ -247,6 +223,7 @@
 	status = "okay";
 };
 
+/*
 &uart7 {
 	pinctrl-names = "default", "sleep", "idle";
 	pinctrl-0 = <&uart7_pins_b>;
@@ -256,7 +233,7 @@
 	/delete-property/dma-names;
 	status = "disabled";
 };
-
+*/
 &usart3 {
 	pinctrl-names = "default", "sleep", "idle";
 	pinctrl-0 = <&usart3_pins_b>;
