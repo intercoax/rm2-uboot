@@ -221,7 +221,6 @@ static int stusb1600_init(struct udevice **dev_stusb1600)
 	u32 chip_addr;
 
 	*dev_stusb1600 = NULL;
-
 	/* if node stusb1600 is present, means DK1 or DK2 board */
 	node = ofnode_by_compatible(ofnode_null(), "st,stusb1600");
 	if (!ofnode_valid(node))

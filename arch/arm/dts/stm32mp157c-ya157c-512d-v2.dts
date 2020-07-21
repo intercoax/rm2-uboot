@@ -7,7 +7,7 @@
 /dts-v1/;
 
 #include "stm32mp157.dtsi"
-#include "stm32mp15xa.dtsi"
+#include "stm32mp15xd.dtsi"
 #include "stm32mp157-pinctrl.dtsi"
 #include "stm32mp15xxac-pinctrl.dtsi"
 #include "stm32mp15xx-ya157c.dtsi"
@@ -159,14 +159,6 @@
 				regulator-over-current-protection;
 			};
 
-			vdd_usb: ldo4 {
-                		compatible = "regulator-fixed";
-                		reg = <1>;
-				regulator-name = "vdd_usb";
-				regulator-min-microvolt = <3300000>;
-				regulator-max-microvolt = <3300000>;
-				//interrupts = <IT_CURLIM_LDO4 0>;
-			};
 
 			vdd_sd: ldo5 {
 				regulator-name = "vdd_sd";
@@ -186,13 +178,17 @@
 				regulator-name = "bst_out";
 				//interrupts = <IT_OCP_BOOST 0>;
 			 };
-
-			vbus_otg: pwr_sw1 {
-				regulator-name = "vbus_otg";
-				//interrupts = <IT_OCP_OTG 0>;
-				regulator-active-discharge;
-			 };
 		};
+
+	vdd_usb: fixedregulator@3 {
+         	compatible = "regulator-fixed";
+         	regulator-name = "vdd_usb";
+         	regulator-min-microvolt = <3300000>;
+         	regulator-max-microvolt = <3300000>;
+   		startup-delay-us = <70000>;
+   		regulator-boot-on;
+   		regulator-pull-down; 
+    	};
 
 };
 
@@ -210,24 +206,6 @@
 	/delete-property/dmas;
 	/delete-property/dma-names;
 
-/*
-	typec: stusb1600@28 {
-         	compatible = "st,stusb1600";
-         	reg = <0x28>;
-         	interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-         	interrupt-parent = <&gpiog>;
-         	pinctrl-names = "default";
-         	pinctrl-0 = <&stusb1600_pins_a>;
-         	status = "okay";
- 
-         	typec_con: connector {
-             		compatible = "usb-c-connector";
-             		label = "USB-C";
-             		power-role = "dual";
-             		power-opmode = "default";
-         	};
-     };
-*/
 	stusb1600@28 {
 		compatible = "st,stusb1600";
 		reg = <0x28>;
@@ -266,11 +244,12 @@
 	};
 };
 
+/*
 &pwr_regulators {
 	vdd-supply = <&vdd>;
 	vdd_3v3_usbfs-supply = <&vdd_usb>;
 };
-
+*/
 /*emmc*/
 &sdmmc2 {
         pinctrl-names = "default", "opendrain", "sleep";
@@ -303,10 +282,11 @@
 
 
 &usbotg_hs {
-	 
+	dr_mode = "peripheral";	 
+	force-b-session-valid;
 	phys = <&usbphyc_port1 0>;
 	phy-names = "usb2-phy";
-	usb-role-switch;
+	//usb-role-switch;
 	status = "okay";
 
 	port {
@@ -314,22 +294,13 @@
 			remote-endpoint = <&con_usbotg_hs_ep>;
 		};
 	};
+
 };
 
-
-/*
-&usbotg_hs {
-	//dr_mode = "peripheral";
-	//force-b-session-valid;
-    	extcon = <&typec>;
-	phys = <&usbphyc_port1 0>;
-	phy-names = "usb2-phy";
-	status = "okay";
-};
-*/
 
 
 &usbphyc {
+	vdd3v3-supply = <&vdd_usb>;
 	status = "okay";
 };
 
