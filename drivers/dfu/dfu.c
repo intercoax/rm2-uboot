@@ -317,7 +317,7 @@ int dfu_write(struct dfu_entity *dfu, void *buf, int size, int blk_seq_num)
 	ret = dfu_transaction_initiate(dfu, false);
 	if (ret < 0)
 		return ret;
-
+	blk_seq_num -= 2;
 	if (dfu->i_blk_seq_num != blk_seq_num) {
 		printf("%s: Wrong sequence number! [%d] [%d]\n",
 		       __func__, dfu->i_blk_seq_num, blk_seq_num);
@@ -437,6 +437,7 @@ int dfu_read(struct dfu_entity *dfu, void *buf, int size, int blk_seq_num)
 	ret = dfu_transaction_initiate(dfu, true);
 	if (ret < 0)
 		return ret;
+	
 
 	if (dfu->i_blk_seq_num != blk_seq_num) {
 		printf("%s: Wrong sequence number! [%d] [%d]\n",

@@ -173,6 +173,12 @@
 				regulator-always-on;
 				regulator-over-current-protection;
 			};
+			vbus_otg: pwr_sw1 {
+                                regulator-name = "vbus_otg";
+                                interrupts = <IT_OCP_OTG 0>;
+                                regulator-active-discharge;
+                         };
+
 
 			 bst_out: boost {
 				regulator-name = "bst_out";
@@ -221,12 +227,13 @@
 			label = "USB-C";
 			power-role = "dual";
 			power-opmode = "default";
-
+	
 			port {
 				con_usbotg_hs_ep: endpoint {
 					remote-endpoint = <&usbotg_hs_ep>;
 				};
 			};
+
 		};
 	};
 
@@ -282,11 +289,9 @@
 
 
 &usbotg_hs {
-	dr_mode = "peripheral";	 
-	force-b-session-valid;
 	phys = <&usbphyc_port1 0>;
 	phy-names = "usb2-phy";
-	//usb-role-switch;
+	usb-role-switch;
 	status = "okay";
 
 	port {
@@ -294,18 +299,37 @@
 			remote-endpoint = <&con_usbotg_hs_ep>;
 		};
 	};
-
 };
 
 
+/*
+&usbotg_hs {
+        dr_mode = "peripheral";
+        phys = <&usbphyc_port1 0>;
+        phy-names = "usb2-phy";
+        status = "okay";
+};
+*/
 
 &usbphyc {
-	vdd3v3-supply = <&vdd_usb>;
 	status = "okay";
 };
 
 
 &usbphyc_port1 {
+	phy-supply = <&vdd_usb>;
+	st,phy-tuning = <&usb_phy_tuning>;
+};
+
+
+
+&usbh_ehci {
+	phys = <&usbphyc_port0>;
+	status = "okay";
+};
+
+
+&usbphyc_port0 {
 	phy-supply = <&vdd_usb>;
 	st,phy-tuning = <&usb_phy_tuning>;
 };

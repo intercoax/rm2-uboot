@@ -702,58 +702,6 @@ error:
         return ret;	
 }
 
-static int ar8031_phy_fixup(struct phy_device *dev)
-{
-            u16 val;
-
-                    /* To enable AR8031 output a 125MHz clk from CLK_25M */
-             phy_write(dev,MDIO_DEVAD_NONE, 0xd, 0x7);
-             phy_write(dev,MDIO_DEVAD_NONE, 0xe, 0x8016);
-             phy_write(dev,MDIO_DEVAD_NONE, 0xd, 0x4007);
-
-             val = phy_read(dev,MDIO_DEVAD_NONE, 0xe);
-            val &= 0xffe3;
-             val |= 0x18;
-             phy_write(dev,MDIO_DEVAD_NONE, 0xe, val);
-
-              phy_write(dev,MDIO_DEVAD_NONE, 0x1d, 0x5);
-               val = phy_read(dev,MDIO_DEVAD_NONE, 0x1e);
-              val |= 0x0100;
-              phy_write(dev,MDIO_DEVAD_NONE, 0x1e, val);
-                return 0;
-}
-
-static int ar8035_phy_fixup(struct phy_device *dev)
-{
-        u16 val;
-
-        /* Ar803x phy SmartEEE feature cause link status generates glitch,
-         * which cause ethernet link down/up issue, so disable SmartEEE
-         */
-        phy_write(dev,MDIO_DEVAD_NONE, 0xd, 0x3);
-        phy_write(dev,MDIO_DEVAD_NONE, 0xe, 0x805d);
-        phy_write(dev,MDIO_DEVAD_NONE, 0xd, 0x4003);
-
-        val = phy_read(dev,MDIO_DEVAD_NONE, 0xe);
-        phy_write(dev,MDIO_DEVAD_NONE, 0xe, val & ~(1 << 8));
-
-                /*
-         * Enable 125MHz clock from CLK_25M on the AR8031.  This
-         * is fed in to the IMX6 on the ENET_REF_CLK (V22) pad.
-         * Also, introduce a tx clock delay.
-         *
-         * This is the same as is the AR8031 fixup.
-         */
-        ar8031_phy_fixup(dev);
-
-        /*check phy power*/
-        val = phy_read(dev,MDIO_DEVAD_NONE, 0x0);
-        if (val & BMCR_PDOWN)
-                phy_write(dev,MDIO_DEVAD_NONE, 0x0, val & ~BMCR_PDOWN);
-
-        return 0;
-}
-#define PHY_ID_AR8035 0x004dd072
 
 
 static bool board_is_ya15xc(void)
@@ -879,12 +827,13 @@ int board_init(void)
 	{
 		
 		wifi_bt_power();
+		dk2_i2c1_fix();
 	}
 	
 	if (board_is_ya15xc_v2())
 	{
 		phy_power();
-		//phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef, ar8035_phy_fixup);
+		
 	}
 		
 	if (board_is_ev1())

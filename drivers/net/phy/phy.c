@@ -467,6 +467,8 @@ static LIST_HEAD(phy_drivers);
 
 int phy_init(void)
 {
+
+
 #ifdef CONFIG_NEEDS_MANUAL_RELOC
 	/*
 	 * The pointers inside phy_drivers also needs to be updated incase of
@@ -611,7 +613,34 @@ static int phy_probe(struct phy_device *phydev)
 	phydev->supported = phydev->drv->features;
 
 	phydev->mmds = phydev->drv->mmds;
+	
+	u16 val;
+	/*----------------------------------------------*/
+        /* Ar803x phy SmartEEE feature cause link status generates glitch,
+         * which cause ethernet link down/up issue, so disable SmartEEE
+         */
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x3);
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xe, 0x805d);
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x4003);
 
+        val = phy_read(phydev,MDIO_DEVAD_NONE, 0xe);
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val & ~(1 << 8));
+	
+	 /* To enable AR8031 output a 125MHz clk from CLK_25M */
+             phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x7);
+             phy_write(phydev,MDIO_DEVAD_NONE, 0xe, 0x8016);
+             phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x4007);
+
+             val = phy_read(phydev,MDIO_DEVAD_NONE, 0xe);
+            val &= 0xffe3;
+             val |= 0x18;
+             phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val);
+
+              phy_write(phydev,MDIO_DEVAD_NONE, 0x1d, 0x5);
+               val = phy_read(phydev,MDIO_DEVAD_NONE, 0x1e);
+              val |= 0x0100;
+              phy_write(phydev,MDIO_DEVAD_NONE, 0x1e, val);
+//--------------------------------------
 	if (phydev->drv->probe)
 		err = phydev->drv->probe(phydev);
 

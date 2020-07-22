@@ -1641,6 +1641,9 @@ err_free_reset_eqos:
 __weak int board_interface_eth_init(struct udevice *dev,
 				    phy_interface_t interface_type)
 {
+	
+	
+printf("test ar8035 !!!");
 	return 0;
 }
 
