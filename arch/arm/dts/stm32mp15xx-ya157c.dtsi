@@ -55,6 +55,52 @@
 			no-map;
 		};
 	};
+/*
+	 panel {
+                compatible = "simple-panel";
+                interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
+                interrupt-parent = <&gpioe>;
+                pinctrl-names = "default", "sleep";
+                pinctrl-0 = <&ltdc_pins_a>;
+                pinctrl-1 = <&ltdc_pins_sleep_a>;
+                enable-gpios = <&gpioe 12 GPIO_ACTIVE_LOW>;
+
+                
+                status = "okay";
+
+                port {
+                        panel_in: endpoint {
+                                remote-endpoint = <&ltdc_ep0_out>;
+                        };
+
+                };
+        };
+*/
+	panel-rgb@0 {
+		compatible = "simple-panel";
+		//backlight = <&backlight>;
+		enable-gpios = <&gpioe 12 0>;
+		status = "okay";
+
+		display-timings {
+			timing@0 {
+				clock-frequency = <9000000>;
+				hactive = <480>;
+				vactive = <272>;
+				hfront-porch = <2>;
+				hback-porch = <2>;
+				hsync-len = <41>;
+				vfront-porch = <2>;
+				vback-porch = <2>;
+				vsync-len = <10>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+				de-active = <0>;
+				pixelclk-active = <1>;
+			};
+		};
+	};
+
 
 	led {
 		compatible = "gpio-leds";
@@ -69,7 +115,7 @@
 };
 
 &optee {
-	status = "disable";
+	status = "okay";
 };
 
 &cpu0{
@@ -96,7 +142,12 @@
 	status = "okay";
 };
 
+&ltdc {
+	status = "okay";
+};
+
 /* test HDMI*/
+/*
 &ltdc {
     status = "okay";
     port {
@@ -109,8 +160,25 @@
                          };
         };
 };
+*/
+/*test LCD*/
+/*
+&ltdc {
+        status = "okay";
+
+        port {
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                ltdc_ep0_out: endpoint@0 {
+                                reg = <0>;
+                                remote-endpoint = <&panel_in>;
+                                };
+           };
+};*/
 
 
+/*
 &i2c2 {
         hdmi-transmitter@39 {
                 compatible = "sil,sii9022";
@@ -137,7 +205,7 @@
                 };
         };
 };
-
+*/
 
 
 
