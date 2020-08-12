@@ -69,20 +69,20 @@ static int ar8035_config(struct phy_device *phydev)
         phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val & ~(1 << 8));
 	
 	 /* To enable AR8031 output a 125MHz clk from CLK_25M */
-             phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x7);
-             phy_write(phydev,MDIO_DEVAD_NONE, 0xe, 0x8016);
-             phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x4007);
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x7);
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xe, 0x8016);
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x4007);
 
-             val = phy_read(phydev,MDIO_DEVAD_NONE, 0xe);
-            val &= 0xffe3;
-             val |= 0x18;
-             phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val);
+        val = phy_read(phydev,MDIO_DEVAD_NONE, 0xe);
+        val &= 0xffe3;
+        val |= 0x18;
+        phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val);
 
-              phy_write(phydev,MDIO_DEVAD_NONE, 0x1d, 0x5);
-               val = phy_read(phydev,MDIO_DEVAD_NONE, 0x1e);
-              val |= 0x0100;
-              phy_write(phydev,MDIO_DEVAD_NONE, 0x1e, val);
-printf("test ar8035 !!!");
+        phy_write(phydev,MDIO_DEVAD_NONE, 0x1d, 0x5);
+        val = phy_read(phydev,MDIO_DEVAD_NONE, 0x1e);
+        val |= 0x0100;
+        phy_write(phydev,MDIO_DEVAD_NONE, 0x1e, val);
+//printf("test ar8035 !!!");
 	/*------------------------------------------*/
 
 	/*
