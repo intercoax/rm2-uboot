@@ -221,7 +221,6 @@ static int stusb1600_init(struct udevice **dev_stusb1600)
 	u32 chip_addr;
 
 	*dev_stusb1600 = NULL;
-
 	/* if node stusb1600 is present, means DK1 or DK2 board */
 	node = ofnode_by_compatible(ofnode_null(), "st,stusb1600");
 	if (!ofnode_valid(node))
@@ -666,6 +665,115 @@ static bool board_is_dk2(void)
 }
 #endif
 
+static bool board_is_ya15xc_v2(void)
+{
+        if (CONFIG_IS_ENABLED(TARGET_ST_STM32MP15x) && of_machine_is_compatible("st,stm32mp157c-ya157c-v2"))
+                return true;
+
+        return false;
+}
+
+static int phy_power(void)
+{
+	ofnode node1;
+        struct gpio_desc phy;
+        int ret = 0;
+
+        node1 = ofnode_path("/wifi_bt_power/phy");
+        if (!ofnode_valid(node1)) {
+                printf("%s:  no phy-power?\n", __func__);
+                return -ENOENT;
+        }
+
+	if (gpio_request_by_name_nodev(node1, "gpios", 0,
+                                       &phy, GPIOD_IS_OUT)) {
+                printf("%s: could not find reset-gpios1\n",
+                         __func__);
+                return -ENOENT;
+        }
+
+	ret = dm_gpio_set_value(&phy, 1);
+        if (ret) {
+                pr_err("%s: can't set_value for phy reset gpio", __func__);
+                goto error;
+        }
+
+error:
+        return ret;	
+}
+
+
+
+static bool board_is_ya15xc(void)
+{
+        if (CONFIG_IS_ENABLED(TARGET_ST_STM32MP15x) &&
+            (of_machine_is_compatible("st,stm32mp157c-ya157c-v1") ||
+             of_machine_is_compatible("st,stm32mp157c-ya157c-v2")))
+                return true;
+
+        return false;
+}
+
+//reset the wifi-bt
+static int wifi_bt_power(void)
+{
+        ofnode node1, node2;
+        struct gpio_desc wifi, bt;
+        int ret = 0;
+
+        node1 = ofnode_path("/wifi_bt_power/wifi");
+        if (!ofnode_valid(node1)) {
+                printf("%s:  no wifi-power?\n", __func__);
+                return -ENOENT;
+        }
+        node2 = ofnode_path("/wifi_bt_power/bt");
+        if (!ofnode_valid(node2)) {
+                printf("%s:  no bt-power?\n", __func__);
+                return -ENOENT;
+        }
+
+        if (gpio_request_by_name_nodev(node1, "gpios", 0,
+                                       &wifi, GPIOD_IS_OUT)) {
+                printf("%s: could not find reset-gpios1\n",
+                         __func__);
+                return -ENOENT;
+        }
+        if (gpio_request_by_name_nodev(node2, "gpios", 0,
+                                       &bt, GPIOD_IS_OUT)) {
+                printf("%s: could not find reset-gpios2\n",
+                         __func__);
+                return -ENOENT;
+        }
+
+        ret = dm_gpio_set_value(&wifi, 0);
+        if (ret) {
+                pr_err("%s: can't set_value for wifi reset gpio", __func__);
+                goto error;
+        }
+        ret = dm_gpio_set_value(&bt, 0);
+        if (ret) {
+                pr_err("%s: can't set_value for bt reset gpio", __func__);
+                goto error;
+        }
+        mdelay(100);//delay
+
+	ret = dm_gpio_set_value(&wifi, 1);
+        if (ret) {
+                pr_err("%s: can't set_value for wifi reset gpio", __func__);
+                goto error;
+        }
+        ret = dm_gpio_set_value(&bt, 1);
+        if (ret) {
+                pr_err("%s: can't set_value for bt reset gpio", __func__);
+                goto error;
+        }
+
+error:
+        return ret;
+
+}
+
+
 static bool board_is_ev1(void)
 {
 	if (CONFIG_IS_ENABLED(TARGET_ST_STM32MP15x) &&
@@ -714,7 +822,20 @@ int board_init(void)
 		gpio_hog_probe_all();
 
 	board_key_check();
-
+	
+	if (board_is_ya15xc())
+	{
+		
+		wifi_bt_power();
+		dk2_i2c1_fix();
+	}
+	
+	if (board_is_ya15xc_v2())
+	{
+		phy_power();
+		
+	}
+		
 	if (board_is_ev1())
 		board_ev1_init();
 

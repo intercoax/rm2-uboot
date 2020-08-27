@@ -81,7 +81,7 @@
 /* Ethernet need */
 #ifdef CONFIG_DWC_ETH_QOS
 #define CONFIG_SYS_NONCACHED_MEMORY	(1 * SZ_1M)	/* 1M */
-#define CONFIG_SERVERIP                 192.168.1.1
+#define CONFIG_SERVERIP                 192.168.30.1
 #define CONFIG_BOOTP_SERVERIP
 #define CONFIG_SYS_AUTOLOAD		"no"
 #endif
@@ -251,7 +251,9 @@
 	STM32MP_ANDROID \
 	PARTS_DEFAULT \
 	BOOTENV \
-	"boot_net_usb_start=true\0"
+	"boot_net_usb_start=true\0" \
+    	"ipaddr=192.168.30.130\0"
+
 
 #endif /* ifndef CONFIG_SPL_BUILD */
 #endif /* ifdef CONFIG_DISTRO_DEFAULTS*/
