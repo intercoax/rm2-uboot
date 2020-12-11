@@ -703,12 +703,13 @@ error:
 }
 
 
-
 static bool board_is_ya15xc(void)
 {
         if (CONFIG_IS_ENABLED(TARGET_ST_STM32MP15x) &&
             (of_machine_is_compatible("st,stm32mp157c-ya157c-v1") ||
-             of_machine_is_compatible("st,stm32mp157c-ya157c-v2")))
+             of_machine_is_compatible("st,stm32mp157c-ya157c-v2") ||
+	     of_machine_is_compatible("myir,stm32mp15xc-ya151c-t") ||
+	     of_machine_is_compatible("myir,stm32mp15xc-ya157c-t")))
                 return true;
 
         return false;
