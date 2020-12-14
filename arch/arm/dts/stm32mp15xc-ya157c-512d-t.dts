@@ -15,7 +15,7 @@
 
 / {
 	model = "MYIRTECH MYD-YA157C-512D-t Development Board";
-	compatible = "myir,stm32mp15xc-ya157c-t", "st,stm32mp157";
+	compatible = "st,stm32mp15xc-ya157c-t", "st,stm32mp157";
 	aliases {
 		ethernet0 = &ethernet0;
 		serial0 = &uart4;
