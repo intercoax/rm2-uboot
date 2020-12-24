@@ -72,6 +72,25 @@
                 regulator-max-microvolt = <5000000>;
                 regulator-always-on;
         };
+	
+	wifi_bt_power:wifi_bt_power {
+              compatible = "wifibt-rst";
+               /*
+		 wifi {
+                    label = "wifi-rst";
+                    gpios = <&gpiof 3 GPIO_ACTIVE_HIGH>;
+                };
+                bt {
+                    label = "bt-rst";
+                    gpios = <&gpiof 15 GPIO_ACTIVE_HIGH>;
+                };
+		*/
+                phy {
+                    label = "phy-rest";
+                    gpios = <&gpiog 3 GPIO_ACTIVE_HIGH>;
+                };
+         };
+
 
 /*
 	 panel {
@@ -527,6 +546,14 @@
 	#size-cells = <0>;
 
 	nand@0 {
+                reg = <0>;
+                nand-on-flash-bbt;
+                #address-cells = <1>;
+                #size-cells = <1>;
+        };
+
+/*
+	nand@0 {
 		reg = <0>;
 		nand-on-flash-bbt;
 		nand-ecc-strength = <8>;
@@ -534,6 +561,7 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 	};
+*/
 };
 
 &sdmmc1 {

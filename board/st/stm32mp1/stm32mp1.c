@@ -673,6 +673,14 @@ static bool board_is_ya15xc_v2(void)
         return false;
 }
 
+static bool board_is_ya15xc_t(void)
+{
+	if (CONFIG_IS_ENABLED(TARGET_ST_STM32MP15x) && (of_machine_is_compatible("st,stm32mp157c-ya151c-t") || of_machine_is_compatible("st,stm32mp15xc-ya151c-t")))
+		return true;
+	
+	return false;
+}
+
 static int phy_power(void)
 {
 	ofnode node1;
@@ -831,7 +839,7 @@ int board_init(void)
 		dk2_i2c1_fix();
 	}
 	
-	if (board_is_ya15xc_v2())
+	if (board_is_ya15xc_v2() || board_is_ya15xc_t())
 	{
 		phy_power();
 		
