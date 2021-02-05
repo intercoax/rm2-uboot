@@ -715,9 +715,7 @@ static bool board_is_ya15xc(void)
 {
         if (CONFIG_IS_ENABLED(TARGET_ST_STM32MP15x) &&
             (of_machine_is_compatible("st,stm32mp157c-ya157c-v1") ||
-             of_machine_is_compatible("st,stm32mp157c-ya157c-v2") ||
-	     of_machine_is_compatible("st,stm32mp15xc-ya151c-t") ||
-	     of_machine_is_compatible("st,stm32mp15xc-ya157c-t")))
+             of_machine_is_compatible("st,stm32mp157c-ya157c-v2")))
                 return true;
 
         return false;
@@ -764,7 +762,7 @@ static int wifi_bt_power(void)
                 pr_err("%s: can't set_value for bt reset gpio", __func__);
                 goto error;
         }
-        mdelay(100);//delay
+        mdelay(10);//delay
 
 	ret = dm_gpio_set_value(&wifi, 1);
         if (ret) {
