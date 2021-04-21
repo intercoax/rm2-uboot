@@ -199,6 +199,14 @@
 	/* spare dmas for other usage */
 	/delete-property/dmas;
 	/delete-property/dma-names;
+	
+	 eeprom@50 {
+                compatible = "atmel,24c32";
+                reg = <0x50>;
+                pagesize = <32>;
+                //wp-gpios = <&gpioa 14 0>;
+                //num-addresses = <8>;
+	      };
 
 	 stusb1600@28 {
                 compatible = "st,stusb1600";

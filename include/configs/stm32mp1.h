@@ -223,6 +223,14 @@
 #define PARTS_DEFAULT
 #endif
 
+
+#define MTDIDS_DEFAULT "nand0=nand0"
+
+#define MTDPARTS_DEFAULT "mtdparts=nand0:2m(fsbl)," \
+                                    "2m(ssbl1)," \
+                                    "2m(ssbl2)," \
+                                    "-(rootfs)"
+
 #include <config_distro_bootcmd.h>
 
 /*
@@ -231,7 +239,7 @@
  * and the ramdisk at the end.
  */
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"bootdelay=1\0" \
+	"bootdelay=0\0" \
 	"kernel_addr_r=0xc2000000\0" \
 	"fdt_addr_r=0xc4000000\0" \
 	"scriptaddr=0xc4100000\0" \

@@ -8,5 +8,6 @@ obj-y += spl.o
 else
 obj-y += stm32mp1.o
 endif
+obj-y += i2c_eeprom_myir.o
 
 obj-y += board.o

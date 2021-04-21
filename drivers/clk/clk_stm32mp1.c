@@ -1489,8 +1489,8 @@ static void stm32mp1_hse_enable(fdt_addr_t rcc, int bypass, int digbyp, int css)
 	if (digbyp)
 		writel(RCC_OCENR_DIGBYP, rcc + RCC_OCENSETR);
 	if (bypass || digbyp)
-		//writel(RCC_OCENR_HSEBYP, rcc + RCC_OCENSETR);
-		writel(RCC_OCENR_HSEBYP, rcc + RCC_OCENCLRR);//for ya157c
+		writel(RCC_OCENR_HSEBYP, rcc + RCC_OCENSETR);
+		//writel(RCC_OCENR_HSEBYP, rcc + RCC_OCENCLRR);//for ya157c
 
 	stm32mp1_hs_ocs_set(1, rcc, RCC_OCENR_HSEON);
 	stm32mp1_osc_wait(1, rcc, RCC_OCRDYR, RCC_OCRDYR_HSERDY);

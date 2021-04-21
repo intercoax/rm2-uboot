@@ -9,7 +9,7 @@
 
 / {
 	aliases {
-		i2c0 = &i2c4;
+		i2c3 = &i2c4;
 		mmc0 = &sdmmc1;
 		usb0 = &usbotg_hs;
 	};
@@ -17,8 +17,8 @@
 		u-boot,boot-led = "heartbeat";
 		u-boot,error-led = "error";
 		u-boot,mmc-env-partition = "ssbl";
-		//st,adc_usb_pd = <&adc1 18>, <&adc1 19>;
-		//st,fastboot-gpios = <&gpioz 0 GPIO_ACTIVE_LOW>;
+	//	st,adc_usb_pd = <&adc1 18>, <&adc1 19>;
+//		st,fastboot-gpios = <&gpioz 0 GPIO_ACTIVE_LOW>;
 		
 	};
 	led {
@@ -35,10 +35,10 @@
 	status = "okay";
 };
 
-
-//&clk_hse {
-//	st,digbypass;
-//};
+#ifndef CONFIG_STM32MP1_TRUSTED
+&clk_hse {
+	st,digbypass;
+};
 
 &i2c4 {
 	u-boot,dm-pre-reloc;
@@ -54,6 +54,7 @@
 &i2s2 {
 	clocks = <&rcc SPI2>, <&rcc SPI2_K>, <&rcc PLL3_Q>, <&rcc PLL3_R>;
 };
+#endif
 
 &pmic {
 	u-boot,dm-pre-reloc;
@@ -74,7 +75,6 @@
                 bias-pull-up;
         };
 };
-
 /*
 &usbotg_hs {
         u-boot,force-b-session-valid;

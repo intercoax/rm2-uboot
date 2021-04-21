@@ -33,6 +33,8 @@
 #include <power/regulator.h>
 #include <usb/dwc2_udc.h>
 
+#include "i2c_eeprom_myir.h"
+
 /* SYSCFG registers */
 #define SYSCFG_BOOTR		0x00
 #define SYSCFG_PMCSETR		0x04
@@ -907,6 +909,13 @@ int board_late_init(void)
 		env_set("board_rev", buf);
 	}
 #endif
+
+	ret = read_eeprom();
+        if (ret)
+                printf("Error %d reading EEPROM content!\n", ret);
+
+        show_eeprom();
+
 
 #ifdef CONFIG_ADC
 	/* for DK1/DK2 boards */

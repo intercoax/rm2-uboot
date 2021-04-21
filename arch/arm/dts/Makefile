@@ -841,6 +841,7 @@ dtb-$(CONFIG_STM32MP15x) += \
 	stm32mp157c-ya157c-512d-v1.dtb \
 	stm32mp157c-ya157c-512d-v2.dtb \
 	stm32mp15xc-ya151c-256d-t.dtb \
+	stm32mp15xc-ya151c-512d-t.dtb \
 	stm32mp15xc-ya157c-512d-t.dtb	
 
 dtb-$(CONFIG_SOC_K3_AM6) += k3-am654-base-board.dtb k3-am654-r5-base-board.dtb
