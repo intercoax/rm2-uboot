@@ -223,13 +223,14 @@
 #define PARTS_DEFAULT
 #endif
 
-
+/*
 #define MTDIDS_DEFAULT "nand0=nand0"
 
 #define MTDPARTS_DEFAULT "mtdparts=nand0:2m(fsbl)," \
                                     "2m(ssbl1)," \
                                     "2m(ssbl2)," \
                                     "-(rootfs)"
+*/
 
 #include <config_distro_bootcmd.h>
 

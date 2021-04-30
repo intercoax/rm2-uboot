@@ -10,7 +10,7 @@ struct id_eeprom {
         u8 mac1[6];	       /*0xa0 ... 0xaf*/
 } __packed;
 
-void show_eeprom(void);
+int show_eeprom(void);
 int read_eeprom(void);
 int read_board_id(void);//no user
 

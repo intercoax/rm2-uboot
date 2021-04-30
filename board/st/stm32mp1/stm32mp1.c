@@ -911,10 +911,11 @@ int board_late_init(void)
 #endif
 
 	ret = read_eeprom();
-        if (ret)
-                printf("Error %d reading EEPROM content!\n", ret);
-
-        show_eeprom();
+        if (!ret)
+	{
+		if(show_eeprom() != 0)
+			printf("Write eeprom err!\n");
+	}
 
 
 #ifdef CONFIG_ADC
