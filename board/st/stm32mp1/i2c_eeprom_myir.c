@@ -18,7 +18,7 @@ int show_eeprom(void)
     puts("Module INFO:\n");
     /* pn */
     len = (eeprom.pn[0] - '0');
-    if(len > 64)
+    if(len > 64)//eliminate eeprom initial values
 	return -1;
     else{
     	for (i = 0; i < len; i++){
