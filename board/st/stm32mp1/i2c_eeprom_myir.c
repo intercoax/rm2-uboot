@@ -35,7 +35,7 @@ int show_eeprom(void)
     /* Serial number */
    len = (eeprom.sn[0] - '0');
    if(len > 64)
-	return -1;
+	   return -1;
    else{
    	for (i = 0; i < len/*(sizeof(eeprom.sn))*/; i++){
 		safe_string[i] = eeprom.sn[i + 1];
@@ -48,12 +48,12 @@ int show_eeprom(void)
     	} else {
         	puts("unknown serial number\n");
     	}
-    }
+   }
     /* MAC address  */
     p = eeprom.mac0;
     if (!is_valid_ethaddr(p)) {
         printf("Not valid MAC address in eeprom!\n");
-        return -1;
+        return 0;
     }
 
     printf("MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
