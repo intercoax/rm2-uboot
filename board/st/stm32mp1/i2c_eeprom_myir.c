@@ -6,7 +6,6 @@
 #include <eeprom_layout.h>
 #include "i2c_eeprom_myir.h"
 
-static int eeprom_has_been_read;
 static struct id_eeprom eeprom;
 
 int show_eeprom(void)

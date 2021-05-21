@@ -20,14 +20,8 @@ struct simple_panel_priv {
 static int simple_panel_enable_backlight(struct udevice *dev)
 {
 	struct simple_panel_priv *priv = dev_get_priv(dev);
-	int ret;
 
-	debug("%s: start, backlight = '%s'\n", __func__, priv->backlight->name);
 	dm_gpio_set_value(&priv->enable, 1);
-	ret = backlight_enable(priv->backlight);
-	debug("%s: done, ret = %d\n", __func__, ret);
-	if (ret)
-		return ret;
 
 	return 0;
 }
@@ -35,23 +29,22 @@ static int simple_panel_enable_backlight(struct udevice *dev)
 static int simple_panel_set_backlight(struct udevice *dev, int percent)
 {
 	struct simple_panel_priv *priv = dev_get_priv(dev);
-	int ret;
 
-	debug("%s: start, backlight = '%s'\n", __func__, priv->backlight->name);
 	dm_gpio_set_value(&priv->enable, 1);
-	ret = backlight_set_brightness(priv->backlight, percent);
-	debug("%s: done, ret = %d\n", __func__, ret);
-	if (ret)
-		return ret;
 
 	return 0;
 }
+int simple_panel_get_timing(struct udevice *dev,struct display_timing *timing)
+{
+	//struct simple_panel_priv *priv = dev_get_priv(dev);
+  return 1;
 
+}
 static int simple_panel_ofdata_to_platdata(struct udevice *dev)
 {
 	struct simple_panel_priv *priv = dev_get_priv(dev);
 	int ret;
-
+/*
 	if (IS_ENABLED(CONFIG_DM_REGULATOR)) {
 		ret = uclass_get_device_by_phandle(UCLASS_REGULATOR, dev,
 						   "power-supply", &priv->reg);
@@ -61,13 +54,14 @@ static int simple_panel_ofdata_to_platdata(struct udevice *dev)
 			if (ret != -ENOENT)
 				return ret;
 		}
-	}
+	}*/
+	/*
 	ret = uclass_get_device_by_phandle(UCLASS_PANEL_BACKLIGHT, dev,
 					   "backlight", &priv->backlight);
 	if (ret) {
 		debug("%s: Cannot get backlight: ret=%d\n", __func__, ret);
 		return log_ret(ret);
-	}
+	}*/
 	ret = gpio_request_by_name(dev, "enable-gpios", 0, &priv->enable,
 				   GPIOD_IS_OUT);
 	if (ret) {
@@ -76,28 +70,19 @@ static int simple_panel_ofdata_to_platdata(struct udevice *dev)
 		if (ret != -ENOENT)
 			return log_ret(ret);
 	}
-
 	return 0;
 }
 
 static int simple_panel_probe(struct udevice *dev)
 {
-	struct simple_panel_priv *priv = dev_get_priv(dev);
-	int ret;
-
-	if (IS_ENABLED(CONFIG_DM_REGULATOR) && priv->reg) {
-		debug("%s: Enable regulator '%s'\n", __func__, priv->reg->name);
-		ret = regulator_set_enable(priv->reg, true);
-		if (ret)
-			return ret;
-	}
-
+	//struct simple_panel_priv *priv = dev_get_priv(dev);
 	return 0;
 }
 
 static const struct panel_ops simple_panel_ops = {
 	.enable_backlight	= simple_panel_enable_backlight,
 	.set_backlight		= simple_panel_set_backlight,
+//	.get_display_timing = simple_panel_get_timing,
 };
 
 static const struct udevice_id simple_panel_ids[] = {
