@@ -18,8 +18,8 @@
 	aliases {
 		ethernet0 = &ethernet0;
 		serial0 = &uart4;
-		i2c0 = &i2c2;
-		i2c1 = &i2c4;
+	//	i2c0 = &i2c2;
+	//	i2c1 = &i2c4;
 	};
 	
 	memory@c0000000 {
