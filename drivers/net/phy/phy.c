@@ -605,9 +605,44 @@ int phy_set_supported(struct phy_device *phydev, u32 max_speed)
 	return 0;
 }
 
+
+#define REG_DEBUG_ADDR_OFFSET		0x1e
+#define REG_DEBUG_DATA			0x1f
+
+
+static int ytphy_mii_rd_ext(struct phy_device *phydev,  u32 regnum)
+{
+	int ret;
+	int val;
+
+	ret = phy_write(phydev,MDIO_DEVAD_NONE, REG_DEBUG_ADDR_OFFSET, regnum);
+	if (ret < 0)
+		return ret;
+
+	val = phy_read(phydev, MDIO_DEVAD_NONE, REG_DEBUG_DATA);
+
+	return val;
+}
+
+static int ytphy_mii_wr_ext(struct phy_device *phydev,  u32 regnum, u16 val)
+{
+	int ret;
+
+	ret = phy_write( phydev,MDIO_DEVAD_NONE, REG_DEBUG_ADDR_OFFSET, regnum);
+	if (ret < 0)
+		return ret;
+
+	ret = phy_write(phydev, MDIO_DEVAD_NONE, REG_DEBUG_DATA, val);
+
+	return ret;
+}
+
 static int phy_probe(struct phy_device *phydev)
 {
 	int err = 0;
+	int ret; //-----
+	int vall;
+	//int debug;
 
 	phydev->advertising = phydev->drv->features;
 	phydev->supported = phydev->drv->features;
@@ -625,7 +660,8 @@ static int phy_probe(struct phy_device *phydev)
 
         val = phy_read(phydev,MDIO_DEVAD_NONE, 0xe);
         phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val & ~(1 << 8));
-	
+
+        #if 0
 	 /* To enable AR8031 output a 125MHz clk from CLK_25M */
              phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x7);
              phy_write(phydev,MDIO_DEVAD_NONE, 0xe, 0x8016);
@@ -640,7 +676,45 @@ static int phy_probe(struct phy_device *phydev)
                val = phy_read(phydev,MDIO_DEVAD_NONE, 0x1e);
               val |= 0x0100;
               phy_write(phydev,MDIO_DEVAD_NONE, 0x1e, val);
-//--------------------------------------
+         #endif
+                
+                /* YT8511 configs 125M */
+
+		        /* disable auto sleep */
+			vall = ytphy_mii_rd_ext( phydev, 0x27);
+			if (vall < 0)
+			        return vall;
+
+			vall &= (~BIT(15));
+
+			ret = ytphy_mii_wr_ext(phydev, 0x27, vall);
+			if (ret < 0)
+			        return ret;
+
+			/* enable RXC clock when no wire plug */
+			vall = ytphy_mii_rd_ext(phydev, 0xc);
+			if (vall < 0)
+			        return vall;
+
+			/* ext reg 0xc.b[2:1]
+			00-----25M pll,01---- 25M xtl,10-----62.5M pll,11----125M pll;
+			*/
+			vall |= (3 << 1);
+			vall |= (1 << 0);
+
+			/*                  //config rx_delay
+			debug = ytphy_mii_rd_ext(phydev,0x1e);
+			printk("debug = %x\n",debug);  //0x300  700 F00 
+			debug |= (0xf << 8);
+			debug |= (1 << 12);   //1F00
+			printk("debug = %x\n",debug);
+			debug = ytphy_mii_wr_ext(phydev,0x1e,debug);
+			debug = ytphy_mii_rd_ext(phydev,0x1e);
+			printk("debug = %x\n",debug);*/
+
+			ret = ytphy_mii_wr_ext(phydev,  0xc, vall);
+			printk("yt8511_config_out_125m, phy clk out, vall=%x\n",vall);
+			
 	if (phydev->drv->probe)
 		err = phydev->drv->probe(phydev);
 
