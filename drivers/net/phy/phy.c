@@ -643,6 +643,7 @@ static int phy_probe(struct phy_device *phydev)
 	int ret; //-----
 	int vall;
 	//int debug;
+	int manufacturer_id;  //manufacturer id
 
 	phydev->advertising = phydev->drv->features;
 	phydev->supported = phydev->drv->features;
@@ -660,8 +661,52 @@ static int phy_probe(struct phy_device *phydev)
 
         val = phy_read(phydev,MDIO_DEVAD_NONE, 0xe);
         phy_write(phydev,MDIO_DEVAD_NONE, 0xe, val & ~(1 << 8));
+	
+	manufacturer_id = phy_read(phydev,MDIO_DEVAD_NONE, 0x3);//read manufacturer_id to config the phy clock
 
-        #if 0
+	if(manufacturer_id == 266)
+	{
+		              
+        /* YT8511 configs 125M */
+	        /* disable auto sleep */
+		vall = ytphy_mii_rd_ext( phydev, 0x27);
+		if (vall < 0)
+		        return vall;
+
+		vall &= (~BIT(15));
+
+		ret = ytphy_mii_wr_ext(phydev, 0x27, vall);
+		if (ret < 0)
+		        return ret;
+
+		/* enable RXC clock when no wire plug */
+		vall = ytphy_mii_rd_ext(phydev, 0xc);
+		if (vall < 0)
+		        return vall;
+
+		/* ext reg 0xc.b[2:1]
+		00-----25M pll,01---- 25M xtl,10-----62.5M pll,11----125M pll;
+		*/
+		vall |= (3 << 1);
+		vall |= (1 << 0);
+
+		/*                  //config rx_delay
+		debug = ytphy_mii_rd_ext(phydev,0x1e);
+		printk("debug = %x\n",debug);  //0x300  700 F00 
+		debug |= (0xf << 8);
+		debug |= (1 << 12);   //1F00
+		printk("debug = %x\n",debug);
+		debug = ytphy_mii_wr_ext(phydev,0x1e,debug);
+		debug = ytphy_mii_rd_ext(phydev,0x1e);
+		printk("debug = %x\n",debug);*/
+
+		ret = ytphy_mii_wr_ext(phydev,  0xc, vall);
+		printk("yt8511_config_out_125m, phy clk out, vall=%x\n",vall);
+	}
+
+	else
+	{
+
 	 /* To enable AR8031 output a 125MHz clk from CLK_25M */
              phy_write(phydev,MDIO_DEVAD_NONE, 0xd, 0x7);
              phy_write(phydev,MDIO_DEVAD_NONE, 0xe, 0x8016);
@@ -676,44 +721,7 @@ static int phy_probe(struct phy_device *phydev)
                val = phy_read(phydev,MDIO_DEVAD_NONE, 0x1e);
               val |= 0x0100;
               phy_write(phydev,MDIO_DEVAD_NONE, 0x1e, val);
-         #endif
-                
-                /* YT8511 configs 125M */
-
-		        /* disable auto sleep */
-			vall = ytphy_mii_rd_ext( phydev, 0x27);
-			if (vall < 0)
-			        return vall;
-
-			vall &= (~BIT(15));
-
-			ret = ytphy_mii_wr_ext(phydev, 0x27, vall);
-			if (ret < 0)
-			        return ret;
-
-			/* enable RXC clock when no wire plug */
-			vall = ytphy_mii_rd_ext(phydev, 0xc);
-			if (vall < 0)
-			        return vall;
-
-			/* ext reg 0xc.b[2:1]
-			00-----25M pll,01---- 25M xtl,10-----62.5M pll,11----125M pll;
-			*/
-			vall |= (3 << 1);
-			vall |= (1 << 0);
-
-			/*                  //config rx_delay
-			debug = ytphy_mii_rd_ext(phydev,0x1e);
-			printk("debug = %x\n",debug);  //0x300  700 F00 
-			debug |= (0xf << 8);
-			debug |= (1 << 12);   //1F00
-			printk("debug = %x\n",debug);
-			debug = ytphy_mii_wr_ext(phydev,0x1e,debug);
-			debug = ytphy_mii_rd_ext(phydev,0x1e);
-			printk("debug = %x\n",debug);*/
-
-			ret = ytphy_mii_wr_ext(phydev,  0xc, vall);
-			printk("yt8511_config_out_125m, phy clk out, vall=%x\n",vall);
+	}
 			
 	if (phydev->drv->probe)
 		err = phydev->drv->probe(phydev);
